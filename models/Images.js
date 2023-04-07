@@ -1,12 +1,8 @@
 module.exports=((sequelize, DataTypes)=>{
     const Images = sequelize.define("Images",{
-        imgUrl:{
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        imgName:{
-            type: DataTypes.STRING,
-            allowNull: false,
+        imgData:{
+            type: DataTypes.BLOB('long'),
+            allowNull: false
         },
     });
 
