@@ -22,7 +22,7 @@ if (config.use_env_variable) {
         dialectModule: mysql2
   });
 } else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config,{
+  sequelize = new Sequelize(config.database, config.username, process.env.DB_PASSWORD, config,{
         dialect: 'mysql',
         dialectModule: mysql2
   });
