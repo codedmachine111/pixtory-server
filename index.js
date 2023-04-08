@@ -25,7 +25,7 @@ app.use("/likes", likesRouter);
 
 db.sequelize.sync().then(() => {
   app.listen(process.env.PORT || 3001, () => {
-    console.log(`Server is running on port ${process.env.PORT}.`);
+    console.log(`Server is running...`);
   });
 }).catch(err => {
   console.log(err);
