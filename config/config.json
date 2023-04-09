@@ -14,10 +14,15 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "ublfj6clvnwuru0t",
-    "database": "b2dqnn6yctkm64rturf4",
-    "host": "b2dqnn6yctkm64rturf4-mysql.services.clever-cloud.com",
+    "username": "1whw81x9e264rh04fxao",
+    "database": "pixtory-db",
+    "host": "aws.connect.psdb.cloud",
     "dialect": "mysql",
+    "dialectOptions": {
+      "ssl": {
+        "ca": "/etc/pki/tls/certs/ca-bundle.crt"
+      }
+    },
     "port": 3306
   }
 }
