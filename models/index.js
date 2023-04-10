@@ -23,11 +23,19 @@ if (config.use_env_variable) {
   });
 } else {
   sequelize = new Sequelize(config.database, config.username, process.env.DB_PASSWORD, config,{
-        dialect: 'mysql',
-        dialectModule: mysql2
-  });
+    dialect: 'mysql',
+    dialectModule: mysql2
+});
 }
-
+// sequelize = new Sequelize(config.database, config.username, process.env.PLANETSCALE_DB_PASSWORD, config,{
+//   dialect: 'mysql',
+//   dialectModule: mysql2,
+//   dialectOptions: {
+//     ssl: {
+//       rejectUnauthorized: true,
+//     },
+//   },
+// });
 fs
   .readdirSync(__dirname)
   .filter(file => {
