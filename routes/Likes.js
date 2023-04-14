@@ -1,19 +1,41 @@
 const express = require("express");
-const { validateToken } = require("../middleware/AuthMiddleware");
 const router = express.Router();
 
-const {Likes} = require('../models');
+const { validateToken } = require("../middleware/AuthMiddleware");
+
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
 router.post('/', validateToken,  async (req,res)=>{
     const userId = req.user.id;
     const {postId} = req.body;
 
-    const found = await Likes.findOne({where:{UserId: userId,PostId: postId}});
+    const found = await prisma.Likes.findUnique({
+        where:{
+            userId_postId:{
+                userId:userId,
+                postId:parseInt(postId)
+            }
+        }
+    })
+
     if(!found){
-        await Likes.create({PostId: postId, UserId: userId})
+        await prisma.Likes.create({
+            data:{
+                userId:userId,
+                postId:parseInt(postId)
+            }
+        })
         res.json({liked: true});
     } else{
-        await Likes.destroy({where:{UserId: userId,PostId: postId}});
+        await prisma.Likes.delete({
+            where:{
+                userId_postId:{
+                    userId:userId,
+                    postId:parseInt(postId)
+                }
+            }
+        })
         res.json({liked: false});
     }
 })

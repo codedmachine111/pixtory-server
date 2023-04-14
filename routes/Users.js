@@ -1,26 +1,36 @@
 const express = require("express");
 const router = express.Router();
-const { Users } = require("../models");
+
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
+
 const { validateToken } = require("../middleware/AuthMiddleware");
 
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
 router.get("/", async (req, res) => {
-  const users = await Users.findAll();
+  const users = await prisma.Users.findMany();
   res.json(users);
 });
 
 router.post("/", async (req, res) => {
   const { username, password } = req.body;
-  const user = await Users.findOne({ where: { username: username } });
+  const user = await prisma.Users.findFirst({
+    where:{
+      username
+    }
+  })
+
   if (!user) {
-    bcrypt.hash(password, 10).then((hash) => {
-      Users.create({
-        username: username,
-        password: hash,
-      });
-      res.json({ message: "User Created!" });
+    const hash = await bcrypt.hash(password, 10);
+    await prisma.Users.create({
+      data:{
+        username:username,
+        password:hash
+      }
     });
+    res.json({ message: "User Created!" });
   } else {
     res.json({ message: "User already exists!" });
   }
@@ -29,8 +39,12 @@ router.post("/", async (req, res) => {
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
-  const user = await Users.findOne({ where: { username: username } });
-
+  const user = await prisma.Users.findFirst({
+    where:{
+      username: username
+    }
+  })
+  
   if (user) {
     bcrypt.compare(password, user.password).then((match) => {
       if (match) {
@@ -53,8 +67,15 @@ router.get("/verify",validateToken, (req,res)=>{
 })
 
 router.get("/info/:id", async(req,res)=>{
-  const id = req.params.id;
-  const user = await Users.findByPk(id, {attributes: {exclude: ['password']}});
+  const user = await prisma.Users.findUnique({
+    where:{
+      id:parseInt(req.params.id)
+    },
+    select:{
+      id: true,
+      username: true
+    }
+  })
   if(!user){
     res.json({message: 'User not found'})
   }else{
