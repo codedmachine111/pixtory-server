@@ -10,7 +10,7 @@ router.post('/', validateToken,  async (req,res)=>{
     const userId = req.user.id;
     const {postId} = req.body;
 
-    const found = await prisma.Likes.findUnique({
+    const found = await prisma.Likes.findFirst({
         where:{
             userId_postId:{
                 userId:userId,
@@ -28,12 +28,10 @@ router.post('/', validateToken,  async (req,res)=>{
         })
         res.json({liked: true});
     } else{
-        await prisma.Likes.delete({
+        await prisma.Likes.deleteMany({
             where:{
-                userId_postId:{
-                    userId:userId,
-                    postId:parseInt(postId)
-                }
+                userId:userId,
+                postId:parseInt(postId)
             }
         })
         res.json({liked: false});

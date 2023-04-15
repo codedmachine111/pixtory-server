@@ -81,15 +81,20 @@ router.post("/", validateToken, imUpload.single("file"), async (req, res) => {
 });
 
 router.delete("/:id", validateToken, async (req, res) => {
-  const post = prisma.Posts.findUnique({
+  const post = await prisma.Posts.findFirst({
     where:{
       id:parseInt(req.params.id)
     }
   })
   if (post.username === req.user.username) {
-    await prisma.Images.delete({
+    await prisma.Images.deleteMany({
       where:{
         postId:parseInt(req.params.id)
+      }
+    })
+    await prisma.Posts.delete({
+      where:{
+        id:parseInt(req.params.id)
       }
     })
     res.json({ message: "Post deleted!" });
